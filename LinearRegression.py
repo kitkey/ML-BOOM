@@ -1,4 +1,7 @@
 from typing import List
+import pandas as pd
+import numpy as np
+
 class LinearRegression():
     def __init__(self, n_iter=100, learning_rate=0.1, metric=None, reg=None, l1_coef=0, l2_coef=0, sgd_sample=None, random_state=42):
         self.n_iter = n_iter
