@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import random
+
 
 class MyTreeReg():
     def __init__(self, max_depth, min_samples_split, max_leafs, bins=None, N_source=0):
