@@ -104,7 +104,7 @@ class MyLogReg():
             self.metric_value = self._get_metric_value(y, y_pred, y_proba)
             
     def __calculate_loss(self, y_target : pd.Series, y_logits : pd.Series) -> float:
-        loss = - 1 / y_target.size * (y_target * np.log(y_logits) + (1-y_target) * np.log(1-y_logits))
+        loss = - 1 / y_target.size * (y_target * np.log(y_logits + 1e-15) + (1-y_target) * np.log(1-y_logits+1e-15))
         return loss
     
     def __calculate_grad_reg(self) -> np.array:
@@ -161,5 +161,6 @@ class MyLogReg():
         return predictions
     def get_best_score(self):
         return self.metric_value
+
 
 
