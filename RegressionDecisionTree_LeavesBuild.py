@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+#Не забыть переделать построение дерева
 class MyTreeReg():
     def __init__(self, max_depth, min_samples_split, max_leafs, bins = None):
         self.max_depth = max_depth
