@@ -4,10 +4,10 @@ import pandas as pd
 
 class SVM():
     def __init__(self,
-                 alpha : float = 1.0,
+                 alpha: float = 1.0,
                  learning_rate: float = 0.01,
-                 num_epochs : int = 500,
-                 kernel : str = "rbf") -> None:
+                 num_epochs: int = 500,
+                 kernel: str = "rbf") -> None:
 
         self.w = None
         self.alpha = alpha
@@ -19,10 +19,10 @@ class SVM():
     def _calculate_kernel_trick(self,
                                 X: pd.DataFrame) -> pd.DataFrame:
         X_t = X.copy().to_numpy()
-
         if self.kernel == "rbf":
             lambda_value = 1 / X.shape[1]
-            X_t = np.exp(-lambda_value * np.sum((X_t[:, np.newaxis] - X_t[np.newaxis, :]) ** 2, axis=1))
+
+            X_t = np.exp(-lambda_value * np.sum((X_t[:, np.newaxis, :] - X_t) ** 2, axis=2))
 
         X_t = pd.DataFrame(X_t)
 
@@ -60,12 +60,14 @@ class SVM():
         y[y != 1] = -1
 
         X_activate = X.copy()
-        if not "Bias" in X.columns:
-            X_activate.insert(column="Bias", value=-1, loc=0)
 
         if self.kernel is not None:
             self.X_train = X_activate.copy()
             X_activate = self._calculate_kernel_trick(X_activate)
+
+        if not "Bias" in X.columns:
+            X_activate.insert(column="Bias", value=-1, loc=0)
+
         self.w = np.random.normal(loc=0, scale=0.05, size=X_activate.shape[1])
 
         for i in range(self.num_epochs):
@@ -76,11 +78,13 @@ class SVM():
     def predict(self,
                 X: pd.DataFrame) -> pd.Series:
         X_test = X.copy()
-        if not "Bias" in X_test.columns:
-            X_test.insert(column="Bias", value=-1, loc=0)
+
         if self.kernel == "rbf":
             X_test = pd.DataFrame(np.exp(
-                -1 / X_test.shape[1] * np.sum(((X_test.to_numpy())[:, np.newaxis] - self.X_train.to_numpy()) ** 2,
-                                              axis=1)))
+                -1 / X_test.shape[1] * np.sum((X_test.to_numpy()[:, np.newaxis, :] - self.X_train.to_numpy()) ** 2,
+                                              axis=2)))
+
+        if not "Bias" in X_test.columns:
+            X_test.insert(column="Bias", value=-1, loc=0)
 
         return self.__activation_function(X_test)
